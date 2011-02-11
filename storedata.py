@@ -78,3 +78,22 @@ def fetch_field_value(label, pagelet_id):
 def update_pagelet_viewcategory(pagelet_id,view_id):
     collection = data_base['pagelet']
     collection.update({'_id':pagelet_id},{"$set":{'views':view_id}})
+
+def getCounter(model):
+    # counter {_id:0, user : num, pagelet : num,..}
+    collection = data_base['counter']
+    try :
+        return collection.find_one({"_id":0})[model]
+    except TypeError:
+        collection.insert({"_id":0,model:0})
+        return 0
+
+def incCounter(model):
+    collection = data_base['counter']
+    try :
+        c = collection.find_one({"_id":0})[model]
+        collection.update({"_id":0},{"$set":{model:c+1}})
+        return c+1
+    except TypeError:
+        collection.insert({"_id":0,model:1})
+        return 1

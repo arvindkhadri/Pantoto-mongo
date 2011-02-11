@@ -10,9 +10,12 @@ class ViewCategory(PanObj):
         self.permissions_id = perm_id
         self.permissions = perm
         self.workflowrole = persona # View is associated with a role
-        self.id = "vc" + str(self.name)
+        self.id = "vc" + str(self.getNextCounter())
         self.data = {"id":self.id,"name":self.name, "permissions": self.permissions_id}
         storedata.save_data_into_db(self.data, self.__class__.__name__.lower())
+
+    def getNextCounter(self):
+        return storedata.incCounter(self.__class__.__name__.lower())
 
     def convert_dict_values(self):        
         return dict(self.permissions)

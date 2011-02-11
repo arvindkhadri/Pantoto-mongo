@@ -7,10 +7,14 @@ class Field(PanObj):
         self.decoration = deco
         self.label = label
         self.value = val
-        self.id = "f" + str(self.id)
+        self.id = "f" + str(self.getNextCounter())
         self.data = {"label":label, "decoration":deco, "id": self.id, "value":self.value}
         storedata.save_data_into_db(self.data, self.__class__.__name__.lower())
+   
+    def getNextCounter(self):
+        return storedata.incCounter(self.__class__.__name__.lower())
       
+
     def setvalue(self, val):
         self.value = val
 

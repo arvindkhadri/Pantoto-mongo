@@ -5,18 +5,23 @@ import storedata
 
 class History:
 
+    # Every object has its history embedded in it.
+    # TODO
+
     id_counter = 0 
 
     def __init__(self, pobj_id, modified_by, last_rev ):
         self.lastmodified = date.today()
         self.lastmodfiedby = ''
-        self.panobjid = pobj_id
+        self.panobjid = pobj_id 
         self.version = last_rev + 1 
         
         # Not sure how to increment version, 
-        # will need o look up the last version each time
+        # will need to look up the last version each time
         self.__class__.id_counter += 1
         self.id = "h" + str(self.__class__.id_counter)
+        # self.id is the id of the history object
+        # panobjid = self.id+panobjid ; makes is a unique history object
 
 
     def __str__(self):
@@ -41,14 +46,16 @@ class History:
 
 class User:
     
-    id_counter = 0
+#    id_counter = 
+    # get the latest counter for user, from the counter object in db
+    # this object will be "u"+counter+1
 
     def __init__(self, fname, lname):
-        self.__class__.id_counter += 1
-        self.id = "u" + str(self.__class__.id_counter)
+#        self.__class__.id_counter += 1 
+        self.id = "u" + str(self.getNextCounter())
         self.firstname = fname
         self.lastname = lname
-        data = dict({"firstname":fname,"lastname":lname,"id":self.id})
+        data = dict({"firstname":fname,"lastname":lname,"_id":self.id})
         storedata.save_data_into_db(data, self.__class__.__name__.lower())
     def __str__(self):
         printstr = "\nUser details"
@@ -65,18 +72,23 @@ class User:
     def getid(self):
         return self.id
 
+    def getNextCounter(self):
+        return storedata.incCounter(self.__class__.__name__.lower())
+
 class Group: # creating user groups
 
-    id_counter = 0
+#    id_counter = 0
 
     def __init__(self, name):
 
-        self.__class__.id_counter += 1
-        self.id = "g" + str(self.__class__.id_counter)
+        self.id = "g" + str(self.getNextCounter())
         self.groupname = name
         self.userlist =[]
-        self.data = {"name":self.groupname,"id":self.id, "list_of_users":self.userlist}
+        self.data = {"name":self.groupname,"_id":self.id, "list_of_users":self.userlist}
         storedata.save_data_into_db(self.data, self.__class__.__name__.lower())
+
+    def getNextCounter(self):
+        return storedata.incCounter(self.__class__.__name__.lower())
 
     def __str__(self):
         printstr = "\nUser details"
@@ -103,16 +115,17 @@ class Group: # creating user groups
 
 class Role: #As a more intuitive alternative to Persona
     
-    id_counter = 0
 
     def __init__(self, rname, rdesc):
-        self.__class__.id_counter += 1
-        self.id = "r" + str(self.__class__.id_counter)
+        self.id = "r" + str(self.getNextCounter())
         self.rolename = rname
         self.roledesc = rdesc
         self.userlist = []
-        self.data = {"name":self.rolename,"id":self.id, "list_of_users":self.userlist}
+        self.data = {"name":self.rolename,"_id":self.id, "list_of_users":self.userlist}
         storedata.save_data_into_db(self.data, self.__class__.__name__.lower())
+
+    def getNextCounter(self):
+        return storedata.incCounter(self.__class__.__name__.lower())
 
     def __str__(self):
         printstr = "\nRole details"

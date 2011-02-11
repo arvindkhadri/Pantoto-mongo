@@ -16,7 +16,7 @@ class Pagelet(PanObj):
         with a view."""
         # self.fields = [(f, Null) for f in self.views.fields] #FieldData set
         # Reworking the ID
-        self.id = "p"+str(self.id)
+        self.id = "p"+str(self.getNextCounter())
         # Maintaining reference of all pagelets posted similar from this draft pagelet.
         # similars?
         self.views = vcs
@@ -32,13 +32,19 @@ class Pagelet(PanObj):
         self.flds = []
         for f in fs:
             self.flds.append(dict({f.getid():f.getvalue()}))
-        pagelet = {"pagelet_name": self.name,
+        pagelet = {"_id:":self.id,
+                   "pagelet_name": self.name,
                    "views": self.view_id, 
                    "field_set": self.flds, 
                    "status": self.status,
                    "authors": self.authors}
                    
         self.pagelet_id = storedata.save_data_into_db(pagelet, self.__class__.__name__.lower())
+
+    def getNextCounter(self):
+        return storedata.incCounter(self.__class__.__name__.lower())
+
+
     def attachcategory(self,viewcategory):
         '''
         Attach a ViewCategory to a pagelet

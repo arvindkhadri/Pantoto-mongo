@@ -1,0 +1,6 @@
+Required:
+	pymongo
+	mongodb
+
+Two test files have been included.  They are called "workflows", viz mongotstpglt and leave.
+For the first time initdb has to be run, which would basically initialize the counter collection with default values.

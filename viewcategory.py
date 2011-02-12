@@ -11,7 +11,7 @@ class ViewCategory(PanObj):
         self.permissions = perm
         self.workflowrole = persona # View is associated with a role
         self.id = "vc" + str(self.getNextCounter())
-        self.data = {"id":self.id,"name":self.name, "permissions": self.permissions_id}
+        self.data = {"_id":self.id,"name":self.name, "permissions": self.permissions_id}
         storedata.save_data_into_db(self.data, self.__class__.__name__.lower())
 
     def getNextCounter(self):
@@ -32,7 +32,6 @@ class ViewCategory(PanObj):
             grpid = ''
             for gid in self.permissions.keys():
                 grp_users = storedata.fetch_ids(gid)
-                #grp = cPickle.load(open(gid+".obj",'rb'))
                 if sessionuserid in grp_users:
                     grpid = gid
                     break

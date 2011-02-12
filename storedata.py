@@ -1,21 +1,22 @@
 from pymongo import Connection
 from utilities import *
-#from exception import SessionFailed
-i = -1
+
 db_connection = Connection('localhost', 27017)
 data_base = db_connection['prototypedb'] #The function is not needed, these two steps are needed always.
   
 def save_data_into_db(data, model):
     collection = data_base[model]
-# if model == "user" and  collection.find_one({'username':data['username']}): 
-#	print "The user already exists."
-#    else:
-    return collection.insert(data)
-    print "Successfully created ",model
+    print data['_id']
+    if (collection.find_one({'_id':data['_id']})): 
+	print "Duplicate id."
+        exit
+    else:
+        collection.insert(data)
+        print "Successfully created ",model
 
-def update_group(grp_name, data, model):
+def update_group(grp_id, data, model):
     collection = data_base[model]
-    collection.update({"name":grp_name},{"$set":{'list_of_users':data}})
+    collection.update({"_id":grp_id},{"$set":{'list_of_users':data}})
 
 def check(username, passwrd):
     collection = data_base['user']
@@ -48,12 +49,12 @@ def update_pagelet(data, model):
 
 def fetch_field(name):
     collection = data_base['field']
-    return collection.find_one({'id':name})['label']
+    return collection.find_one({'_id':name})['label']
     
 def fetch_ids(name):
     collection = data_base['group']
     ul = []
-    ul = collection.find_one({'id':name})['list_of_users']
+    ul = collection.find_one({'_id':name})['list_of_users']
     return ul
 
 def update_field(sessionuser, ans, pg_id):
@@ -83,6 +84,7 @@ def getCounter(model):
     # counter {_id:0, user : num, pagelet : num,..}
     collection = data_base['counter']
     try :
+        collection.find_one({"_id":0})
         return collection.find_one({"_id":0})[model]
     except TypeError:
         collection.insert({"_id":0,model:0})
@@ -91,7 +93,7 @@ def getCounter(model):
 def incCounter(model):
     collection = data_base['counter']
     try :
-        c = collection.find_one({"_id":0})[model]
+        c = collection.find_one({'_id':0})[model]
         collection.update({"_id":0},{"$set":{model:c+1}})
         return c+1
     except TypeError:

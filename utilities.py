@@ -105,7 +105,7 @@ class Group: # creating user groups
 
     def adduser(self,userid):
         self.userlist.append(userid)
-        storedata.update_group(self.groupname, self.userlist, self.__class__.__name__.lower())
+        storedata.update_group(self.id, self.userlist, self.__class__.__name__.lower())
     
     def hasuser(self,userid):
         if userid in self.userlist:
@@ -183,6 +183,7 @@ class Permissions:
         return self.data.values()
 
     def getitem(self, key):
+        print "Self data",self.data
         return self.data[key]
 
     def update(self,dict):

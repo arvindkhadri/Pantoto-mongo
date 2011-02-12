@@ -32,14 +32,14 @@ class Pagelet(PanObj):
         self.flds = []
         for f in fs:
             self.flds.append(dict({f.getid():f.getvalue()}))
-        pagelet = {"_id:":self.id,
+        pagelet = {"_id":self.id,
                    "pagelet_name": self.name,
                    "views": self.view_id, 
                    "field_set": self.flds, 
                    "status": self.status,
                    "authors": self.authors}
                    
-        self.pagelet_id = storedata.save_data_into_db(pagelet, self.__class__.__name__.lower())
+        storedata.save_data_into_db(pagelet, self.__class__.__name__.lower())
 
     def getNextCounter(self):
         return storedata.incCounter(self.__class__.__name__.lower())
@@ -107,7 +107,7 @@ class Pagelet(PanObj):
 #         for f in newf:
 #             fieldid.append(f.id)
         newp = Pagelet(sessionuserid,name,self.views,self.fields)
-        self.leaves.append(newp.pagelet_id)
+        self.leaves.append(newp.id)
         return newp
 
         #p... = ...  start cloning
@@ -128,7 +128,7 @@ class Pagelet(PanObj):
             for field in fieldset.keys():
                 if 'r' in list(fieldset[field]) or (fieldset[field] =='-w' and pgt.isauthor(sessionuserid)==True): 
                     fld = storedata.fetch_field(field)
-                    newdict[fld] = storedata.fetch_field_value(field, pgt.pagelet_id)
+                    newdict[fld] = storedata.fetch_field_value(field, pgt.id)
                     if fld not in colhead:
                         colhead.append(fld)
             newrow[pgt.getid()] = newdict 
@@ -158,13 +158,14 @@ class Pagelet(PanObj):
             fld = storedata.fetch_field(field)
 #fld = cPickle.load(open(field + ".obj",'rb'))
             if 'r' in list(fieldset[field]) or (fieldset[field] =='-w' and self.isauthor(sessionuserid)==True): 
-                print "\n" + str(fld) + storedata.fetch_field_value(field, self.pagelet_id)
+                print "\n" + str(fld) + storedata.fetch_field_value(field, self.id)
                 #storedata.field_value(sessionuserid)
         
     def edit(self,sessionuserid):
         '''
         For fields in cs, show editable fields
         '''
+        print "pagelet",sessionuserid
         fieldset = self.acl(sessionuserid)
         list_of_fields = []
         for field in fieldset.keys():
@@ -173,8 +174,8 @@ class Pagelet(PanObj):
                 ans = raw_input(var)            
                 list_of_fields.append(dict({field:ans}))
             else:
-                list_of_fields.append({field: storedata.fetch_field_value(field, self.pagelet_id) })
-        storedata.update_field(self.sessionuser, list_of_fields, self.pagelet_id)
+                list_of_fields.append({field: storedata.fetch_field_value(field, self.id) })
+        storedata.update_field(self.sessionuser, list_of_fields, self.id)
 
     def isauthor(self,sessionuserid):
         if sessionuserid in self.authors:

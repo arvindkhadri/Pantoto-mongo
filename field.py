@@ -8,7 +8,7 @@ class Field(PanObj):
         self.label = label
         self.value = val
         self.id = "f" + str(self.getNextCounter())
-        self.data = {"label":label, "decoration":deco, "id": self.id, "value":self.value}
+        self.data = {"label":label, "decoration":deco, "_id": self.id, "value":self.value}
         storedata.save_data_into_db(self.data, self.__class__.__name__.lower())
    
     def getNextCounter(self):
